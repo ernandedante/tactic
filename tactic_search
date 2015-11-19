@@ -14,12 +14,13 @@
 			Sera tambem	para monitorar a adicao de novos arquivos, criacao de um novo shot,
 			ou Asset, a cada novo item encontrado, sera atualizado o banco de dados, como
 			os novos dados.
+
+			atualizado 17/11/2015
 	========================================================================================
 '''
 
 import os
 from pprint import pprint
-# rom tactic_connect import *
 
 class TacticSearch():
 	def __init__(self):
@@ -28,35 +29,25 @@ class TacticSearch():
 						  	'nuke' : ''		,
 						  	'houdini': '' 	
 						  	}
-		self.pathDir = "/atomo/jobs/"							  	
-		self.path_sam = ""
-		self.path_render = []
 
+		print "Iniciando..."
 
 	def arvoreBusca(self):
-
-			'''
-			Procura render em cada job que tenha 
-			sido rendido pelo SAM.
-			'''
 		
-		# self.pathDir = '/atomo/jobs/'
-		# self.path_sam = ""
-		# self.path_render = []
+		caminhoPreDefinido = "/atomo/jobs/"
+		path_sam = ""
+		path_render = []
 
-		for each in os.listdir( self.pathDir ):
-
-			self.path_sam = "%s%s%s" % ( self.pathDir, each, "/sam" )
-			
-			if os.path.exists( self.path_sam ):
-				
-				self.path_render.append( self.path_sam + "/render" )
+		for each in os.listdir( caminhoPreDefinido ):
+			path_sam = "%s%s%s" % ( caminhoPreDefinido, each, "/sam" )
+			if os.path.exists( path_sam ):
+				path_render.append( path_sam + "/render" )
 
 		path_versions_maya = []
 		path_versions_nuke = []
 		path_versions_houdini = []
 
-		for each in self.path_render:
+		for each in path_render:
 #			Cada if seleciona os peth existente, dentro do job que tenha sido rendido com o SAM.			
 			if 'maya' in os.listdir( each ):
 				path_maya = each + "/maya"
@@ -87,29 +78,28 @@ class TacticSearch():
 # 		Retorna um dicionario com o path de cada job quem foi rendido com o SAM.
 		return self.sam_paths
 
-
 	def getPathFiles( self, soft ):
 
-		allImage = {}
+		nameImagens = {}
 		version  = ''
 		img      = ''
-		allPaths = []
+		pathImagens = []
 
 # 		Listando imagens do render sonbre maya.		
 		maya = self.arvoreBusca()[soft]
-		for index in range( len( maya ) ):
+		for index in range( len(maya) ):
 			ppath    = maya[index]
 			arquivos = os.listdir( maya[index] )
 			for i in arquivos:
 				img = ppath + "/" + i
 				try:
-					imagens = os.listdir( version.join( img ) )
+					imagens = os.listdir( version.join(img) )
 					for j in imagens:
 						img_2 = img + "/" + j
 						if "images" in img_2:
 # 							Todos os nomes de arquivos
-							allPaths.append( img_2 )
-							allImage[img_2] = os.listdir( img_2 )
+							pathImagens.append( img_2 )
+							nameImagens[img_2] = os.listdir( img_2 )
 						else:
 							pass
 							# print " [%s] Not image! " % str(len(j))
@@ -117,10 +107,16 @@ class TacticSearch():
 				except OSError:
 					pass
 
-		return allImage, allPaths
+		return nameImagens, pathImagens, self.sam_paths
 
 
-m = TacticSearch()
-valuerOne, valueTow = m.getPathFiles()
+''' Essa class tem como retorno path de imagens do SAM 
+	So nome de arquivos, e path de cada arquivo.
+	caminho de cada sorftware, houdini, maya, nuke.
 
-print valuerOne
+		* Todos os arquivos estao em tif ou exr             
+		* Verificar como converter as imagens para jpg, ou png. '''
+
+# m = TacticSearch()
+# imagens, path, path_sam= m.getPathFiles('maya')
+# print path_sam['maya']
