@@ -20,6 +20,15 @@
 
 from searchfiles import TacticSearch
 
+
+# Nome de cada projeto.
+
+def searchProjetos():
+	pass
+
+# Procuar pelo nome dos jobs.
+search_type = "prod/asset"
+
 def compare():
 	# buscar informacoes do servidor	
 	pass
@@ -27,3 +36,5 @@ def compare():
 
 def verifyUp():
 	# Verificar se tem arquivos para serem uploadado.
+	pass
+
