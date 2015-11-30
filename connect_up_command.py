@@ -7,15 +7,42 @@
 #
 #	 Faz a ligacao com o servidor. Ira manda os arquivos que foram selecionados.
 #
-#
 #	 				by:. Ernande dante
 #	
 #													     			 atualizacao: 23/11/2015
 #
 # ==========================================================================================
 
+# import apenas para teste, jeito tosto
+
 from searchfiles import TacticSearch
-import os
+from converte_jpg import converter
+import os, sys
+
+# ------------------------------------------------------------------------------------------
+# import apenas para teste, jeito tosto
+
+ppath = 'xxx'
+
+if os.path.exists( ppath ):
+	
+	print ( 'Path exist!' )
+	
+	sys.path.append( 'xxx' )
+	
+	try:
+
+		from tactic_client_lib import TacticServerStub, TacticApiException
+		
+		server = TacticServerStub()
+		
+		print ('Importado com sucesso! *** ')
+
+	except ImportError:
+		
+		print ('Modulo nao foi encontrado.')
+
+# ------------------------------------------------------------------------------------------
 
 ''' Essa classe por enquanto apenas mostra algumas etapas para upar um arquivo.
 	Ela recebe um dicionario com varios caminhos, nos quais ja foram selecionados
@@ -23,17 +50,40 @@ import os
 '''
 
 class ConnectionTactic():
+
 	def __init__(self):
+
 		self.listNameSnapshots = []
+
 		# Inicializando a classe que vare todo o servidor buscando caminhos de 
-		# imagens do SAM. 
+		# imagens do SAM.
+
 		self.imagens, self.paths, self.paths01 = TacticSearch().getPathFiles("maya")
-		# self.search_type = 'atomo'
-		self.search_type = 'atomo/shot'
 
-		# * * * * * * * * * 
-		self.nameSnapshots()
+''' Toda parte de configuracao de servidor '''
 
+		projeto_name = 'xxxx'
+		ip_sever     = 'xxx.xxx.x.xx'
+
+		if projeto_name:
+			server = TacticServerStub()
+			server.set_server(ip_sever)
+			server.set_project(projeto_name)
+			print 'OK server'
+		else:
+			print 'server down'
+
+		search_type = projeto_name + '/shot'
+		print 'USER LOGIN: %s' % (server.get_login())
+		print server.build_search_type(search_type)
+
+''' Inicializando a busca por arquvos '''
+
+		# self.nameSnapshots()
+
+	def converter_jpg(self, path):
+		# Vai converter todas as imagens que forem necessarias.
+		converter(path)
 
 	def nameSnapshots(self):
 		for index, itens in enumerate(self.paths):
@@ -76,7 +126,11 @@ class ConnectionTactic():
 			snapshot_code = server.create_snapshot(search_key, 'model')
 			server.add_file(snapshot_code.get('code'), self.nameSnapshots + '/' + code, mode='upload', create_icon=True)
 
-	
+
+
+
 
 c = ConnectionTactic()
-print c.go()
+# print c.go()
+
+
